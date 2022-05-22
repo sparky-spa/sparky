@@ -1,0 +1,22 @@
+{
+    "name": "sparky-spa/sparky",
+    "autoload": {
+        "psr-4": {
+            "SparkySpa\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "PavloM",
+            "email": "webxid@ukr.net"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "opis/closure": "^3.6",
+        "webxid/basic-classes": "^1.2"
+    },
+    "require-dev": {
+        "webxid/debug-helpers": "^1.0"
+    }
+}
