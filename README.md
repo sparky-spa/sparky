@@ -9,7 +9,7 @@ Set up the settings
 \SparkySpa\Sparky::config([
     // Mandatory properties
     'namespace' => 'App\SparkyComponent', // the namespace of your components
-    'ajax_uri' => '____', // endpoint for ajax request. It could be relate or absolute link. 
+    'ajax_uri' => '<ajax_uri>', // endpoint for ajax request. It could be relate or absolute link. 
     'view_callback' => function(string $view_name, array $data = []): string 
     {
         // here you can use any views handler, blade, twig, handlebar etc.
