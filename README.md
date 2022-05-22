@@ -2,7 +2,9 @@
 
 ## Install the lib
 
-### Config
+Run `composer require sparky-spa/sparky`
+
+### Setup config
 
 Set up the settings
 ```php
