@@ -143,7 +143,53 @@ This is an action, which calls by `emit` actions.
 Return a string to skip the `$component->render();` calling. The returned string will be a response onto an ajax request.
 In the case, the action `$component->beforeRendering();` will be skipped too. So, please, call it inside the `$component->customAction();`, if it needs.
 
-# Front-end
+# Views
+
+## Emit component action
+
+### On Click action
+
+```html
+<div spa:click="action_name('param')"></div>
+```
+
+### Emit action
+
+```html
+<div spa:emit="action_name({name: 123})">0s delay by default</div>
+<div spa:emit.750ms="action_name('param')">trigger action in 750ms after loading</div>
+<div spa:emit.2s="action_name('param_1', 'param_2')"></div>
+<div spa:emit.5m="action_name()"></div>
+<div spa:emit.1h="action_name"></div>
+```
+
+The time - is delay to an action will emit after the Sparky loading
+
+## Init component event
+
+### Action on a page/component load
+
+The main different between `spa:emit` and `spa:event` is the last one inits an event listeners but not to call the component action on back-end 
+
+```html
+<div spa:event="event_name({name: 123})">0s interval by default</div>
+<div spa:event.750ms="event_name('param')">trigger event in 750ms after loading</div>
+<div spa:event.2s="event_name('param_1', 'param_2')"></div>
+<div spa:event.5m="event_name()"></div>
+<div spa:event.1h="event_name"></div>
+```
+
+## Bind Component property to a HTML field
+
+The `component_property_name` has to be public property of a component
+
+```html
+<input spa:bind="component_property_name" type="text" name="field-name">
+<input spa:bind type="text" name="component_property_name">
+```
+
+
+# JavaScript
 
 ## Sparky load events
 
@@ -167,25 +213,6 @@ document.addEventListener('SparkySpaLoad', function()
 - `SparkySpaLoad` - inits before a component events queue will be process.
 
 
-## Emit component action
-
-### On Click action
-
-```html
-<div spa:click="action_name('param')"></div>
-```
-
-### Emit action
-
-```html
-<div spa:emit="action_name({name: 123})">0s delay by default</div>
-<div spa:emit.750ms="action_name('param')">trigger action in 750ms after loading</div>
-<div spa:emit.2s="action_name('param_1', 'param_2')"></div>
-<div spa:emit.5m="action_name()"></div>
-<div spa:emit.1h="action_name"></div>
-```
-
-The time - is delay to an action will emit
 
 
 ### Emit component action in JS
@@ -217,18 +244,6 @@ document.addEventListener('SparkySpaLoad', function()
 
 ## Init component event
 
-### Action on a page/component load
-
-The main different between `spa:emit` and `spa:event` is the last one inits an event listeners but not to call the component action on back-end 
-
-```html
-<div spa:event="event_name({name: 123})">0s interval by default</div>
-<div spa:event.750ms="event_name('param')">trigger event in 750ms after loading</div>
-<div spa:event.2s="event_name('param_1', 'param_2')"></div>
-<div spa:event.5m="event_name()"></div>
-<div spa:event.1h="event_name"></div>
-```
-
 ### To init component event in JS
 
 It also will not call a component method but inits the event listeners 
@@ -257,15 +272,15 @@ document.addEventListener('SparkySpaLoad', function()
 	Sparky.on('component_name', 'event_name', (dom_element, event_data, component) => {});
 
 	// listens all events with `event_name` without any relation to a component.
-    Sparky.onAny('event_name', (dom_element, event_data, component) => {
+    	Sparky.onAny('event_name', (dom_element, event_data, component) => {
 		if (!component.is('component_name')) {
 			return;
-        }
+        	}
 
 		if (!dom_element) {
 			// dom_element coould be null in 2 cases
-            // 1. There was calling `Sparky.initEvent()` without `dom_element`
-            // 2. A component has been refreshed and the element was replaced with new one
+            		// 1. There was calling `Sparky.initEvent()` without `dom_element`
+            		// 2. A component has been refreshed and the element was replaced with new one
 			
 			return Sparky.LISTENER_FORGET; // will remove the listener from a stack
 		}
@@ -298,4 +313,4 @@ This event pass an updated properties list to a listener
 
 ## WARNING
 
-> Please, do not pass secure data into a Component's public property. It passes to front-end and could be get in browser  
+> Please, do not pass secure data into a Component's public property. It passes to front-end and could be readed in browser  
