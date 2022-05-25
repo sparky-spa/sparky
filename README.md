@@ -1,6 +1,6 @@
 # HOW TO USE
 
-## Install the lib
+## Install
 
 Run `composer require sparky-spa/sparky`
 
