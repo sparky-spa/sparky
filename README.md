@@ -26,21 +26,48 @@ Set up the settings
 ]);
 ```
 
-### Endpoint `ajax_uri`
+### Endpoint `ajax_uri` implementation
 
 It has to support the next URIs
 
+```php
+// POST <ajax_uri>/{$component_name}/{$action}/{$args}
+// POST <ajax_uri>/{$component_name}/{$action}
+// POST <ajax_uri>/{$component_name}
+
+// GET <ajax_uri>/{\SparkySpa\Sparky::NAME_MINI_JS}
 ```
-POST <ajax_uri>/{component_name}/{action}/{args}'
-POST <ajax_uri>/{component_name}/{action}'
-POST <ajax_uri>/{component_name}'
-GET <ajax_uri>/___sparky-spa-min-js
+
+Also, use the function `handleHttpRequest()` to implement the endpoints correctly
+
+#### For `POST <ajax_uri>/....` requests
+
+```php
+use function SparkySpa\handleHttpRequest;
+
+echo handleHttpRequest(
+	$component_name,
+	$action,
+	$args,
+	$post_body
+);
+```
+
+#### For `GET <ajax_uri>/{Sparky::NAME_MINI_JS}` request
+
+```php
+
+use function SparkySpa\handleHttpRequest;
+use SparkySpa\Sparky;
+
+echo handleHttpRequest(
+	Sparky::NAME_MINI_JS
+);
+
 ```
 
 
 # Back-end
-
-Use `\SparkySpa\handleHttpRequest()` to implement the endpoints
 
 ## Insert component into view
 
