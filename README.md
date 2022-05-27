@@ -97,7 +97,7 @@ class ChatCheckerComponent extends Component
 }
 ```
 
-## Insert component onto a page
+## Insert component into a page
 
 The all next variants will work correctly
 
