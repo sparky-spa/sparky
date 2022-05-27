@@ -71,7 +71,7 @@ Feel free to use the tool 😉
 
 # Back-end
 
-## Insert component into view
+## Implement a Component
 
 Let imagine, we have the component
 
@@ -96,6 +96,8 @@ class ChatCheckerComponent extends Component
     #endregion
 }
 ```
+
+## Insert component into view
 
 The all next variants will work correctly
 
