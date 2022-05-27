@@ -4,7 +4,10 @@
     "autoload": {
         "psr-4": {
             "SparkySpa\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "authors": [
         {
