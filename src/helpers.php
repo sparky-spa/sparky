@@ -5,22 +5,24 @@ namespace SparkySpa;
 /**
  * @param string $component
  * @param array $data
+ *
+ * @return mixed
  */
-function sparky(string $component, array $data = [])
+function sparky(string $component, array $data = []): string
 {
-    return Sparky::render($component, $data);
+    return Sparky::render($component, $data)['body'] ?? '';
 }
 
 /**
  * @param string $component
- * @param string|array $method
+ * @param string|array $action_name
  * @param array $data
  *
  * @return string
  */
-function emit(string $component, $method, array $data = [])
+function emit(string $component, $action_name, array $data = []): string
 {
-    return  Sparky::emitTo($component, $method, $data);
+    return Sparky::emitTo($component, $action_name, $data)['body'] ?? '';
 }
 
 /**
@@ -86,14 +88,14 @@ function handleHttpRequest(string $component_name, string $action = null, string
             return Sparky::updateBindsTo($component_name, $component_data);
         }
 
-        return Sparky::emitTo(
+        return json_encode(Sparky::emitTo(
             $component_name,
             [
                 $action,
                 !$args ? [] : json_decode(base64_decode($args), true)
             ],
             $component_data
-        );
+        ));
     } catch (\Throwable $e) {
         if (Sparky::getConfig('is_dev_mode', false)) {
             print_r([

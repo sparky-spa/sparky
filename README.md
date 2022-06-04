@@ -253,13 +253,13 @@ It also will not call a component method but inits the event listeners
 ```js
 document.addEventListener('SparkySpaLoad', function() 
 {
-	Sparky.initEvent('component_name', 'event_name');
-	Sparky.initEvent('component_name', 'event_name', []);
-	Sparky.initEvent('component_name', 'event_name', [], dom_element);
+	Sparky.initEventTo('component_name', 'event_name');
+	Sparky.initEventTo('component_name', 'event_name', []);
+	Sparky.initEventTo('component_name', 'event_name', [], dom_element);
 
-	Sparky.initAnyEvent('event_name'); // inits all events with `event_name` without any relation to a component.
-	Sparky.initAnyEvent('event_name', []); // inits all events with `event_name` without any relation to a component.
-	Sparky.initAnyEvent('event_name', [], dom_element); // inits all events with `event_name` without any relation to a component.
+	Sparky.initEventAny('event_name'); // inits all events with `event_name` without any relation to a component.
+	Sparky.initEventAny('event_name', []); // inits all events with `event_name` without any relation to a component.
+	Sparky.initEventAny('event_name', [], dom_element); // inits all events with `event_name` without any relation to a component.
 });
 ```
 
@@ -281,7 +281,7 @@ document.addEventListener('SparkySpaLoad', function()
 
 		if (!dom_element) {
 			// dom_element coould be null in 2 cases
-            		// 1. There was calling `Sparky.initEvent()` without `dom_element`
+            		// 1. There was calling `Sparky.initEventTo()` without `dom_element`
             		// 2. A component has been refreshed and the element was replaced with new one
 			
 			return Sparky.LISTENER_FORGET; // will remove the listener from a stack

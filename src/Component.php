@@ -8,6 +8,8 @@ use WebXID\BasicClasses\DataContainer;
 
 abstract class Component extends DataContainer
 {
+    const ANY_COMPONENT = 'spa:any-component';
+
     /** @var string[] */
     protected $public_properties = [];
 
@@ -54,9 +56,12 @@ abstract class Component extends DataContainer
      * @param string|null $method_name
      * @param array $args
      *
-     * @return string
+     * @return array [
+     *      'body' => string,
+     *      'emits' => array
+     * ]
      */
-    public function init(string $method_name = null, array $args = []): string
+    public function init(string $method_name = null, array $args = []): array
     {
         if (!$method_name) {
             $this->mount();
@@ -84,11 +89,13 @@ abstract class Component extends DataContainer
             return $this->getResponseBody($component_html);
         }
 
-        return '
+        $component_html = '
             <div sparky-x-new-component sparky-x-component-name="' . static::getName() . '" sparky-x-component-context="' . $this->getContext() . '">
                 ' . $this->getHtmlBody($component_html) . '
                 ' . $this->getEmittedActionsHtml() .'
             </div>';
+
+        return $this->getResponseBody($component_html, false);
     }
 
     /**
@@ -108,14 +115,14 @@ abstract class Component extends DataContainer
 
     /**
      * @param string $component
-     * @param string $method
+     * @param string $action_name
      * @param array $data
      *
      * @return $this
      */
-    public function emit(string $event, array $data = []): self
+    public function emit(string $action_name, array $data = []): self
     {
-        $this->emitTo(static::getName(), $event, $data);
+        $this->emitTo(static::getName(), $action_name, $data);
 
         return $this;
     }
@@ -127,18 +134,31 @@ abstract class Component extends DataContainer
      *
      * @return $this
      */
-    public function emitTo(string $component, string $action_name, array $data = []): self
+    public function emitTo(string $component, string $action_name, array $data = [], $type = Action::TYPE_LOUD): self
     {
-        $component_class = static::getClassName($component);
+        $component_class = $component === static::ANY_COMPONENT
+            ? null
+            : static::getClassName($component);
 
-        if (!method_exists($component_class, $action_name)) {
-            throw new \InvalidArgumentException("The component `{$component}` does not have action `{$action_name}`");
+        switch ($type) {
+            case Action::TYPE_LOUD:
+            case Action::TYPE_INIT:
+            case Action::TYPE_INIT_ANY:
+                break;
+
+            default:
+                if (!method_exists($component_class, $action_name)) {
+                    throw new \InvalidArgumentException("The component `{$component}` does not have action `{$action_name}`");
+                }
         }
 
         $this->emitted_actions[] = Action::make([
-            'component_name' => $component_class::getName(),
+            'component_name' => $component_class === null
+                ? static::ANY_COMPONENT
+                : $component_class::getName(),
             'name' => $action_name,
             'data' => $data,
+            'type' => $type,
         ]);
 
         return $this;
@@ -153,6 +173,45 @@ abstract class Component extends DataContainer
     public function emitRefreshTo(string $component, array $data = [])
     {
         return $this->emitTo($component, 'refresh', $data);
+    }
+
+    /**
+     * @param string $event
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function initEvent(string $event, array $data = []): self
+    {
+        $this->emitTo(static::getName(), $event, $data, Action::TYPE_INIT);
+
+        return $this;
+    }
+
+    /**
+     * @param string $event
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function initEventTo(string $component, string $event, array $data = []): self
+    {
+        $this->emitTo($component, $event, $data, Action::TYPE_INIT);
+
+        return $this;
+    }
+
+    /**
+     * @param string $event
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function initEventAny(string $event, array $data = []): self
+    {
+        $this->emitTo(static::ANY_COMPONENT, $event, $data, Action::TYPE_INIT_ANY);
+
+        return $this;
     }
 
     #endregion
@@ -212,7 +271,7 @@ abstract class Component extends DataContainer
 
             if (!class_exists($component_name)) {
                 if (!class_exists($namespace)) {
-                    ___dump([
+                    print_r([
                         $component_name_1,
                         $component_name,
                     ]);
@@ -228,13 +287,29 @@ abstract class Component extends DataContainer
     }
 
     /**
-     * @param array $data
+     * Render a component layout
+     *
+     * @param array $component_data
      *
      * @return string
      */
-    final public static function getTplBody(array $data = [])
+    final public static function renderBody(array $component_data = []): string
     {
-        return Sparky::render(static::getName(), $data);
+        return Sparky::render(static::getName(), $component_data)['body'] ?? '';
+    }
+
+    /**
+     * Render a component method
+     *
+     * @param string $action_name
+     * @param array $args
+     * @param array $component_data
+     *
+     * @return array
+     */
+    final public static function renderAction(string $action_name, array $args = [], array $component_data = []): array
+    {
+        return Sparky::emitTo(static::getName(), [$action_name, $args], $component_data);
     }
 
     /**
@@ -263,6 +338,7 @@ abstract class Component extends DataContainer
                 'component_name' => $event->component_name,
                 'action_name' => $event->name,
                 'data' => $event->data,
+                'type' => $event->type,
             ];
         }
 
@@ -279,7 +355,22 @@ abstract class Component extends DataContainer
         foreach ($this->emitted_actions as $event) {
             $data = json_encode($event->data);
 
-            $result .= "Sparky.emitTo('{$event->component_name}', '{$event->name}', {$data});";
+            switch ($event->type) {
+                case Action::TYPE_LOUD:
+                    $result .= "Sparky.emitTo('{$event->component_name}', '{$event->name}', {$data});";
+                    break;
+
+                case Action::TYPE_INIT:
+                    $result .= "Sparky.initEventTo('{$event->component_name}', '{$event->name}', {$data});";
+                    break;
+
+                case Action::TYPE_INIT_ANY:
+                    $result .= "Sparky.initEventAny('{$event->name}', {$data});";
+                    break;
+
+                default:
+                    throw new \LogicException('Invalid $event->type, given `' . $event->type . '`');
+            }
         }
 
         if (!$result) {
@@ -322,15 +413,22 @@ abstract class Component extends DataContainer
     /**
      * @param string $component_html
      *
-     * @return false|string
+     * @return array
      */
-    private function getResponseBody(string $component_html)
+    private function getResponseBody(string $component_html, $render_context = true): array
     {
-        return json_encode([
+        if (!$render_context) {
+            return [
+                'body' => $this->getHtmlBody($component_html),
+                'emits' => $this->getEmittedActions(),
+            ];
+        }
+
+        return [
             'body' => $this->getHtmlBody($component_html),
             'emits' => $this->getEmittedActions(),
             'context' => $this->getContext(),
-        ]);
+        ];
     }
 
     #endregion

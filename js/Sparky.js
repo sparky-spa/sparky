@@ -251,7 +251,7 @@ export class Sparky
 	 * @param {array|null} data
 	 * @param {HTMLElement|jQuery} element
 	 */
-	initEvent(component_name, event_name, data = null, element = null)
+	initEventTo(component_name, event_name, data = null, element = null)
 	{
 		component_name = Sparky.sanitizeComponentName(component_name);
 
@@ -272,9 +272,9 @@ export class Sparky
 	 * @param {array|null} data
 	 * @param {HTMLElement|jQuery} element
 	 */
-	initAnyEvent(event_name, data = null, element = null)
+	initEventAny(event_name, data = null, element = null)
 	{
-		this.initEvent('spa:any-component', event_name, data, element);
+		this.initEventTo('spa:any-component', event_name, data, element);
 
 		return this;
 	}
@@ -388,7 +388,23 @@ export class Sparky
 			}
 
 			response.emits.forEach((item) => {
-				global.Sparky.emitTo(item.component_name, item.action_name, item.data);
+				switch (item.type) {
+					case 'loud':
+						global.Sparky.emitTo(item.component_name, item.action_name, item.data);
+						break;
+
+					case 'init':
+						global.Sparky.initEventTo(item.component_name, item.action_name, item.data);
+						break;
+
+					case 'init_any':
+						global.Sparky.initEventAny(item.action_name, item.data);
+						break;
+
+					default:
+						console.warn('Unknown event type: ' + item.type);
+				}
+
 			});
 		});
 	}

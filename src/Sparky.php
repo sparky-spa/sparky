@@ -31,9 +31,9 @@ class Sparky
 
     /**
      * @param string $component
-     * @param array $data
+     * @param array $data // component data
      *
-     * @return string
+     * @return array
      */
     public static function render(string $component, array $data = [])
     {
@@ -43,7 +43,7 @@ class Sparky
 
     /**
      * @param string $component
-     * @param string|array $method
+     * @param string|array $action_data
      * [
      *      method,
      *      [
@@ -54,16 +54,16 @@ class Sparky
      *
      * @param array $data
      *
-     * @return string
+     * @return array
      */
-    public static function emitTo(string $component, $method, array $data = []): string
+    public static function emitTo(string $component, $action_data, array $data = []): array
     {
         $component = static::factory($component, $data);
 
-        $args = is_array($method) ? $method[1] : [];
-        $method = is_array($method) ? $method[0] : $method;
+        $args = is_array($action_data) ? $action_data[1] : [];
+        $action_name = is_array($action_data) ? $action_data[0] : $action_data;
 
-        return $component->init($method, $args);
+        return $component->init($action_name, $args);
     }
 
     /**

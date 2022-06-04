@@ -47,7 +47,7 @@ export class EventAction extends EmitAction
 		}
 
 		setTimeout(() => {
-			global.Sparky.initEvent(component.name, event.name, event.data, element);
+			global.Sparky.initEventTo(component.name, event.name, event.data, element);
 		}, time ? time : 1);
 	}
 }
