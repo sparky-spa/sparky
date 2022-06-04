@@ -149,10 +149,16 @@ In the case, the action `$component->beforeRendering();` will be skipped too. So
 
 ## Emit component action
 
-### On Click action
+### onClick: emit action
 
 ```html
 <div spa:click="action_name('param')"></div>
+```
+
+### onClick: init event
+
+```html
+<div spa:click="event:action_name('param')"></div>
 ```
 
 ### Emit action

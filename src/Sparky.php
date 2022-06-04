@@ -60,7 +60,7 @@ class Sparky
     {
         $component = static::factory($component, $data);
 
-        $args = is_array($action_data) ? $action_data[1] : [];
+        $args = is_array($action_data) ? ($action_data[1] ?? []) : [];
         $action_name = is_array($action_data) ? $action_data[0] : $action_data;
 
         return $component->init($action_name, $args);
