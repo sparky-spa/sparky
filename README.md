@@ -1,10 +1,18 @@
-# HOW TO USE
+<p align="center">
+	<a href="https://sparky-spa.webxid.net" target="_blank"><img style="" src="https://i.imgur.com/3W7wwm7.png"></a>
+</p>
+<h1 align="center">The tool to develop Single Page Applications on PHP</h1>
+<p align="center">Easy to start, easy to use</p>
 
-## Install
+<br><br>
+
+## HOW TO USE
+
+### Install
 
 Run `composer require sparky-spa/sparky`
 
-### Setup config
+#### Setup config
 
 Set up the settings
 ```php
@@ -26,7 +34,7 @@ Set up the settings
 ]);
 ```
 
-### Endpoint `ajax_uri` implementation
+#### Endpoint `ajax_uri` implementation
 
 It has to support the next URIs
 
@@ -40,7 +48,7 @@ It has to support the next URIs
 
 Also, use the function `handleHttpRequest()` to implement the endpoints correctly
 
-#### For `POST <ajax_uri>/....` requests
+##### For `POST <ajax_uri>/....` requests
 
 ```php
 use function SparkySpa\handleHttpRequest;
@@ -53,7 +61,7 @@ echo handleHttpRequest(
 );
 ```
 
-#### For `GET <ajax_uri>/{Sparky::NAME_MINI_JS}` request
+##### For `GET <ajax_uri>/{Sparky::NAME_MINI_JS}` request
 
 ```php
 
@@ -69,9 +77,9 @@ echo handleHttpRequest(
 Feel free to use the tool 😉
 
 
-# Back-end
+## Back-end
 
-## Implement a Component
+### Implement a Component
 
 Let imagine, we have the component
 
@@ -97,7 +105,7 @@ class ChatCheckerComponent extends Component
 }
 ```
 
-## Insert component into a page
+### Insert component into a page
 
 The all next variants will work correctly
 
@@ -118,7 +126,7 @@ use function SparkySpa\sparky;
 echo sparky('user.chat_checker');
 ```
 
-## Component Actions
+### Component Actions
 
 Calling order of a component actions
 
@@ -138,18 +146,18 @@ if (!is_string($response)) {
 $component->afterRendering();
 ```
 
-### customAction
+#### customAction
 
 This is an action, which calls by `emit` actions.
 
 Return a string to skip the `$component->render();` calling. The returned string will be a response onto an ajax request.
 In the case, the action `$component->beforeRendering();` will be skipped too. So, please, call it inside the `$component->customAction();`, if it needs.
 
-# Views
+## Views
 
-## Emit component action
+### Emit component action
 
-### onClick: emit action
+#### onClick: emit action
 
 It makes request to back-end to an action
 
@@ -157,7 +165,7 @@ It makes request to back-end to an action
 <div spa:click="action_name('param')"></div>
 ```
 
-### onClick: init event
+#### onClick: init event
 
 It doesn't make request to back-end but trig an event/action listeners only
 
@@ -165,7 +173,7 @@ It doesn't make request to back-end but trig an event/action listeners only
 <div spa:click="event:event_name('param')"></div>
 ```
 
-### Emit action
+#### Emit action
 
 ```html
 <div spa:emit="action_name({name: 123})">0s delay by default</div>
@@ -177,11 +185,11 @@ It doesn't make request to back-end but trig an event/action listeners only
 
 The time - is delay to an action will emit after the Sparky loading
 
-## Init component event
+### Init component event
 
-### Action on a page/component load
+#### Action on a page/component load
 
-The main different between `spa:emit` and `spa:event` is the last one inits an event listeners but not to call the component action on back-end 
+The main different between `spa:emit` and `spa:event` is the last one inits an event listeners but not to call the component action on back-end
 
 ```html
 <div spa:event="event_name({name: 123})">0s interval by default</div>
@@ -191,7 +199,7 @@ The main different between `spa:emit` and `spa:event` is the last one inits an e
 <div spa:event.1h="event_name"></div>
 ```
 
-## Bind Component property to a HTML field
+### Bind Component property to HTML field
 
 The `component_property_name` has to be public property of a component
 
@@ -201,9 +209,9 @@ The `component_property_name` has to be public property of a component
 ```
 
 
-# JavaScript
+## JavaScript
 
-## Sparky load events
+### Sparky load events
 
 It's important to use the load events, because it's a safety way to prevent the error `Uncaught ReferenceError: Sparky is not defined`
 
@@ -214,9 +222,9 @@ document.addEventListener('SparkySpaLoad', function()
 });
 ```
 
-### Events list
+#### Events list
 
-**Inits once per a page load** 
+**Inits once per a page load**
 - `SparkySpaSetConfig` - Sparky config could not be set up at the moment. Please do not use the event if you`re not sure
 - `SparkySpaBeforeInit` - the event after the config setting up
 - `SparkySpaInit` - the all Sparky elements have been initiated
@@ -227,7 +235,7 @@ document.addEventListener('SparkySpaLoad', function()
 
 
 
-### Emit component action in JS
+#### Emit component action in JS
 
 The next executions will call a component method
 
@@ -254,11 +262,11 @@ document.addEventListener('SparkySpaLoad', function()
 `callback` - it will execute after an emit request will be done and before a listener calling
 
 
-## Init component event
+### Init component event
 
-### To init component event in JS
+#### To init component event in JS
 
-It also will not call a component method but inits the event listeners 
+It also will not call a component method but inits the event listeners
 
 ```js
 document.addEventListener('SparkySpaLoad', function() 
@@ -274,7 +282,7 @@ document.addEventListener('SparkySpaLoad', function()
 ```
 
 
-## Event/Action Listener in JS
+### Event/Action Listener in JS
 
 Use the next things to listen an event
 
@@ -304,14 +312,14 @@ document.addEventListener('SparkySpaLoad', function()
 `event_name` - it's a component method name, which was called
 `component_name` - a component name of an event.
 
-`event_data.response` - it will contain HTML body of response if an action (not event) was emitted quietly   
+`event_data.response` - it will contain HTML body of response if an action (not event) was emitted quietly
 
 > Note
-> Do not check a component 
+> Do not check a component
 
-### Reserved event names
+#### Reserved event names
 
-#### sparky:update_binds
+##### sparky:update_binds
 
 `sparky:update_binds` - executes on a component property update by a bound tag.
 
@@ -321,8 +329,8 @@ document.addEventListener('SparkySpaLoad', function()
 ```
 
 This event pass an updated properties list to a listener
- 
 
-## WARNING
+
+### WARNING
 
 > Please, do not pass secure data into a Component's public property. It passes to front-end and could be readed in browser  
