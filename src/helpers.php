@@ -92,7 +92,7 @@ function handleHttpRequest(string $component_name, string $action = null, string
             $component_name,
             [
                 $action,
-                !$args ? [] : json_decode(base64_decode($args), true)
+                !$args ? [] : json_decode(urldecode(base64_decode($args)), true)
             ],
             $component_data
         ));

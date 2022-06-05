@@ -337,7 +337,7 @@ export class Sparky
 			return;
 		}
 
-		let url = Sparky.#config.uri + "/" + component.name + "/" + action_name + '/' + window.btoa(JSON.stringify(data));
+		let url = Sparky.#config.uri + "/" + component.name + "/" + action_name + '/' + window.btoa(encodeURIComponent(JSON.stringify(data)));
 
 		this.#sendRequest(url, component, function (data, textStatus) {
 			let response = data.target.response;
