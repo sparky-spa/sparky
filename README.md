@@ -151,14 +151,18 @@ In the case, the action `$component->beforeRendering();` will be skipped too. So
 
 ### onClick: emit action
 
+It makes request to back-end to an action
+
 ```html
 <div spa:click="action_name('param')"></div>
 ```
 
 ### onClick: init event
 
+It doesn't make request to back-end but trig an event/action listeners only
+
 ```html
-<div spa:click="event:action_name('param')"></div>
+<div spa:click="event:event_name('param')"></div>
 ```
 
 ### Emit action
