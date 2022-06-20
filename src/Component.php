@@ -271,11 +271,6 @@ abstract class Component extends DataContainer
 
             if (!class_exists($component_name)) {
                 if (!class_exists($namespace)) {
-                    print_r([
-                        $component_name_1,
-                        $component_name,
-                    ]);
-
                     throw new \LogicException('Component `' . $namespace . '` does not exist');
                 }
 
